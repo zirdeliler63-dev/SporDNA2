@@ -887,7 +887,7 @@
                         </div>
                         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 mt-4 flex items-center justify-between text-[11px] font-mono leading-none">
                             <span class="text-slate-400">GÖREV:</span>
-                            <span class="text-slate-655 dark:text-slate-300 font-bold">Creative Director & Video Sorumlusu</span>
+                            <span class="text-slate-655 dark:text-slate-300 font-bold">Marka Tasarımcısı, Video Tasarımcısı</span>
                         </div>
                     </div>
 
@@ -909,7 +909,7 @@
                         </div>
                         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 mt-4 flex items-center justify-between text-[11px] font-mono leading-none">
                             <span class="text-slate-400">GÖREV:</span>
-                            <span class="text-slate-655 dark:text-slate-300 font-bold">AI Architect & Investor Specialist</span>
+                            <span class="text-slate-655 dark:text-slate-300 font-bold font-sans">Yapay Zeka Mimarı, Sunum ve Yatırımcı İlişkileri Uzmanı</span>
                         </div>
                     </div>
 
@@ -931,7 +931,7 @@
                         </div>
                         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 mt-4 flex items-center justify-between text-[11px] font-mono leading-none">
                             <span class="text-slate-400">GÖREV:</span>
-                            <span class="text-slate-655 dark:text-slate-300 font-bold">Prompt Engineer & Content Strategist</span>
+                            <span class="text-slate-655 dark:text-slate-300 font-bold">Prompt Mühendisi, İçerik Tasarımcısı</span>
                         </div>
                     </div>
 
@@ -953,7 +953,7 @@
                         </div>
                         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 mt-4 flex items-center justify-between text-[11px] font-mono leading-none">
                             <span class="text-slate-400">GÖREV:</span>
-                            <span class="text-slate-655 dark:text-slate-300 font-bold">Business Model & Problem Analyst</span>
+                            <span class="text-slate-655 dark:text-slate-300 font-bold">Problem Analisti, İş Modeli Uzmanı</span>
                         </div>
                     </div>
 
@@ -975,7 +975,7 @@
                         </div>
                         <div class="pt-4 border-t border-slate-100 dark:border-slate-800 mt-4 flex items-center justify-between text-[11px] font-mono leading-none">
                             <span class="text-slate-400">GÖREV:</span>
-                            <span class="text-slate-655 dark:text-slate-300 font-bold">Research Specialist & Prototype Builder</span>
+                            <span class="text-slate-655 dark:text-slate-300 font-bold">Araştırma Uzmanı, Prototip geliştiricisi</span>
                         </div>
                     </div>
                 </div>
