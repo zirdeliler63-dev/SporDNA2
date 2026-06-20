@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sporterra - Atletik Biyomekani ve Spor Yönlendirme Sistemi</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    boxShadow: {
+                        '3xs': '0 1px 2px rgba(0,0,0,0.03)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-card {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body class="text-slate-900 selection:bg-emerald-500 selection:text-white flex flex-col min-h-screen">
+
+    <!-- HEADER -->
+    <header class="border-b border-gray-100 bg-white sticky top-0 z-50 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center">
+                    <i data-lucide="trophy" class="w-5 h-5 text-emerald-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-extrabold text-slate-900 tracking-tight leading-none flex items-center gap-1.5">
+                        SPORTERRA <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded-sm font-normal">KİNESİYOLOJİ</span>
+                    </h1>
+                    <p class="text-[11px] text-slate-400 leading-none mt-1">
+                        Biyomekanik & Postür Odaklı Spor Gelişim Sistemi
+                    </p>
+                </div>
+            </div>
+
+            <div class="hidden md:flex items-center gap-6 text-xs text-slate-500 font-medium">
+                <span class="flex items-center gap-1.5">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> %100 Bilimsel Analiz
+                </span>
+                <span class="flex items-center gap-1.5">
+                    <i data-lucide="zap" class="w-4 h-4 text-amber-500 animate-pulse"></i> Yerel Kinesiyoloji Motoru
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+        
+        <!-- INITIAL MARKETING BAR -->
+        <div id="intro-card" class="mb-8 p-6 bg-white border border-gray-100 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6 no-print">
+            <div class="max-w-2xl">
+                <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-snug">
+                     Fiziksel Özelliklerinize %100 Uyan Spor Branşını Tespit Edin
+                </h2>
+                <p class="text-xs text-slate-500 leading-relaxed mt-1">
+                    Bu sistem iskelet yapınızı (omuz/kalça oranı), duruş sapmalarını (kifoz, lordoz, asimetriler), kas lifi yapınızı ve eklem mobilitenizi sentezleyerek size yön vermeyi amaçlar. Formu doldurarak veya örnek atlet profillerini kullanarak test edebilirsiniz.
+                </p>
+            </div>
+
+            <!-- Live Status label -->
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 shrink-0 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center">
+                    <i data-lucide="activity" class="w-4 h-4 text-emerald-600 animate-pulse"></i>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-800">Doğru Yönlendirme</div>
+                    <div class="text-[10px] text-gray-400 leading-none mt-0.5">Momentum & Biyomekanik katsayı tespiti</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN GRID: FORM OR RESULTS -->
+        <div id="app-workspace" class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            
+            <!-- LEFT WIZARD BOX -->
+            <div id="form-container" class="lg:col-span-3 bg-white border border-gray-100 rounded-3xl p-6 md:p-8 shadow-sm no-print">
+                
+                <!-- Stepper Progress bar -->
+                <div class="relative mb-8">
+                    <div class="flex justify-between items-center relative z-10">
+                        <!-- Step 1 -->
+                        <div class="flex flex-col items-center cursor-pointer step-indicator" onclick="goToStep(0)">
+                            <div id="step-badge-0" class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs border transition-all duration-300 bg-slate-900 border-slate-900 text-white shadow-md ring-4 ring-slate-100">1</div>
+                            <span id="step-text-0" class="text-[10px] sm:text-[11px] font-bold text-slate-900 mt-2">Genel Bilgiler</span>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="flex flex-col items-center cursor-pointer step-indicator" onclick="goToStep(1)">
+                            <div id="step-badge-1" class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs border transition-all duration-300 bg-white border-gray-200 text-gray-400">2</div>
+                            <span id="step-text-1" class="text-[10px] sm:text-[11px] font-medium text-gray-400 mt-2">İskelet Yapısı</span>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="flex flex-col items-center cursor-pointer step-indicator" onclick="goToStep(2)">
+                            <div id="step-badge-2" class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs border transition-all duration-300 bg-white border-gray-200 text-gray-400">3</div>
+                            <span id="step-text-2" class="text-[10px] sm:text-[11px] font-medium text-gray-400 mt-2">Duruş (Postür)</span>
+                        </div>
+                        <!-- Step 4 -->
+                        <div class="flex flex-col items-center cursor-pointer step-indicator" onclick="goToStep(3)">
+                            <div id="step-badge-3" class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs border transition-all duration-300 bg-white border-gray-200 text-gray-400">4</div>
+                            <span id="step-text-3" class="text-[10px] sm:text-[11px] font-medium text-gray-400 mt-2">Kas & Lif Tipi</span>
+                        </div>
+                        <!-- Step 5 -->
+                        <div class="flex flex-col items-center cursor-pointer step-indicator" onclick="goToStep(4)">
+                            <div id="step-badge-4" class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs border transition-all duration-300 bg-white border-gray-200 text-gray-400">5</div>
+                            <span id="step-text-4" class="text-[10px] sm:text-[11px] font-medium text-gray-400 mt-2">Kemik & Hedef</span>
+                        </div>
+                    </div>
+                    <!-- Indicator line line -->
+                    <div class="absolute top-[18px] left-[6%] right-[6%] h-[2px] bg-slate-100 -z-10">
+                        <div id="stepper-line" class="h-full bg-emerald-500 transition-all duration-500 w-0"></div>
+                    </div>
+                </div>
+
+                <!-- Validation Warning Alert -->
+                <div id="validation-alert" class="hidden mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-xl flex items-center gap-3 text-red-700 text-xs font-medium">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-red-500 shrink-0"></i>
+                    <span id="validation-msg">Lütfen eksik alanları doldurunuz.</span>
+                </div>
+
+                <!-- FORM CONTENT SECTIONS -->
+                <form id="kinesiology-form" class="min-h-[290px]">
+                    
+                    <!-- STEP 0: GENERAL SYSTEM INPUTS -->
+                    <div id="form-step-0" class="step-pane space-y-6">
+                        <div class="border-b border-gray-100 pb-2">
+                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="user" class="w-5 h-5 text-emerald-500"></i> Temel Fiziksel Parametreler
+                            </h3>
+                            <p class="text-[11px] text-slate-500">
+                                Genel antropometrik yapınızı girin. Bu değerler mekanik direnç hesabı için temel teşkil eder.
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Yaş (Yıl)</label>
+                                <input type="number" id="input-age" value="24" min="5" max="100" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-slate-800 outline-none text-sm bg-slate-50/50" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Boy (cm)</label>
+                                <input type="number" id="input-height" value="180" min="100" max="230" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-slate-800 outline-none text-sm bg-slate-50/50" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Kilo (kg)</label>
+                                <input type="number" id="input-weight" value="75" min="25" max="200" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-slate-800 outline-none text-sm bg-slate-50/50" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-3">Biyolojik Cinsiyet</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <button type="button" onclick="setGender('Erkek')" id="btn-gender-Erkek" class="gender-btn px-4 py-3 border text-xs font-semibold rounded-xl text-center transition-all bg-slate-900 border-slate-900 text-white shadow-xs">Erkek</button>
+                                <button type="button" onclick="setGender('Kadın')" id="btn-gender-Kadın" class="gender-btn px-4 py-3 border text-xs font-semibold rounded-xl text-center transition-all bg-white border-gray-200 text-gray-700 hover:bg-slate-50">Kadın</button>
+                                <button type="button" onclick="setGender('Belirtmek İstemiyorum')" id="btn-gender-Belirtmek İstemiyorum" class="gender-btn px-4 py-3 border text-xs font-semibold rounded-xl text-center transition-all bg-white border-gray-200 text-gray-700 hover:bg-slate-50">Belirtmek İstemiyorum</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-3">Güncel Spor Seviyesi</label>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <button type="button" onclick="setFitness('Başlangıç')" id="btn-fit-Başlangıç" class="fit-btn p-4 border text-left rounded-2xl transition-all flex flex-col gap-1 bg-white border-gray-200 hover:bg-slate-50/50">
+                                    <span class="text-xs font-bold text-slate-800">Başlangıç Seviyesi</span>
+                                    <span class="text-[10px] text-gray-500 leading-snug">Haftada en fazla 1 gün veya hiç spor yapmıyor.</span>
+                                </button>
+                                <button type="button" onclick="setFitness('Orta')" id="btn-fit-Orta" class="fit-btn p-4 border text-left rounded-2xl transition-all flex flex-col gap-1 border-emerald-500 bg-emerald-50/25 ring-1 ring-emerald-500">
+                                    <span class="text-xs font-bold text-emerald-700">Orta Seviye</span>
+                                    <span class="text-[10px] text-gray-500 leading-snug">Haftada 2-3 gün düzenli egzersiz veya rekreasyonel spor geçmişi.</span>
+                                </button>
+                                <button type="button" onclick="setFitness('İleri')" id="btn-fit-İleri" class="fit-btn p-4 border text-left rounded-2xl transition-all flex flex-col gap-1 bg-white border-gray-200 hover:bg-slate-50/50">
+                                    <span class="text-xs font-bold text-slate-800">İleri / Profesyonel</span>
+                                    <span class="text-[10px] text-gray-500 leading-snug">Haftada 4 günden fazla direnç ve kondisyon çalışan lisanslı sporcu.</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 1: SKELETAL INPUTS -->
+                    <div id="form-step-1" class="step-pane hidden space-y-6">
+                        <div class="border-b border-gray-100 pb-2">
+                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="compass" class="w-5 h-5 text-emerald-500"></i> İskelet Yapısı & Kemik Çatısı
+                            </h3>
+                            <p class="text-[11px] text-slate-500">
+                                Omuz-kalça oranları ve ekstremite uzunlukları, kuvvet momentini ve spor biyomekaniğini doğrudan etkiler.
+                            </p>
+                        </div>
+
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Omuz Genişliği</label>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <button type="button" onclick="setSkeleton('shoulderWidth', 'Dar')" id="btn-skel-shoulder-Dar" class="skel-shoulder-btn py-3 px-4 border text-xs font-bold rounded-xl bg-white border-gray-200 hover:bg-slate-50">Dar omuzlar</button>
+                                    <button type="button" onclick="setSkeleton('shoulderWidth', 'Orta')" id="btn-skel-shoulder-Orta" class="skel-shoulder-btn py-3 px-4 border text-xs font-bold rounded-xl bg-slate-900 border-slate-900 text-white shadow-xs">Orta omuzlar</button>
+                                    <button type="button" onclick="setSkeleton('shoulderWidth', 'Geniş')" id="btn-skel-shoulder-Geniş" class="skel-shoulder-btn py-3 px-4 border text-xs font-bold rounded-xl bg-white border-gray-200 hover:bg-slate-50">Geniş omuzlar</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Kalça Genişliği</label>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <button type="button" onclick="setSkeleton('hipWidth', 'Dar')" id="btn-skel-hip-Dar" class="skel-hip-btn py-3 px-4 border text-xs font-bold rounded-xl bg-white border-gray-200 hover:bg-slate-50">Dar kalça</button>
+                                    <button type="button" onclick="setSkeleton('hipWidth', 'Orta')" id="btn-skel-hip-Orta" class="skel-hip-btn py-3 px-4 border text-xs font-bold rounded-xl bg-slate-900 border-slate-900 text-white shadow-xs">Orta kalça</button>
+                                    <button type="button" onclick="setSkeleton('hipWidth', 'Geniş')" id="btn-skel-hip-Geniş" class="skel-hip-btn py-3 px-4 border text-xs font-bold rounded-xl bg-white border-gray-200 hover:bg-slate-50">Geniş kalça</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Gövdeye Oranla Kol & Bacak (Ekstremite) Uzunluğu</label>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <button type="button" onclick="setSkeleton('limbLengthRatio', 'Kısa')" id="btn-skel-limb-Kısa" class="skel-limb-btn p-3 border text-left rounded-xl flex flex-col gap-1 bg-white border-gray-200 hover:bg-slate-50">
+                                        <span class="text-xs font-bold text-slate-800">Kısa Kollar/Bacaklar</span>
+                                        <span class="text-[9px] text-gray-500 leading-tight">Yüksek tork ve kaldırma momenti avantajı.</span>
+                                    </button>
+                                    <button type="button" onclick="setSkeleton('limbLengthRatio', 'Ortalama')" id="btn-skel-limb-Ortalama" class="skel-limb-btn p-3 border text-left rounded-xl flex flex-col gap-1 border-emerald-500 bg-emerald-50/20">
+                                        <span class="text-xs font-bold text-emerald-800">Dengeli Limbler</span>
+                                        <span class="text-[9px] text-gray-400 leading-tight">Çok yönlü standart koordinasyon düzeyi.</span>
+                                    </button>
+                                    <button type="button" onclick="setSkeleton('limbLengthRatio', 'Uzun')" id="btn-skel-limb-Uzun" class="skel-limb-btn p-3 border text-left rounded-xl flex flex-col gap-1 bg-white border-gray-200 hover:bg-slate-50">
+                                        <span class="text-xs font-bold text-slate-800">Uzun Kollar/Bacaklar</span>
+                                        <span class="text-[9px] text-gray-500 leading-tight">Yüzme kulaç mesafesi ve kaldıraç genişliği.</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Simetrik Omurga Dizilimi</label>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <button type="button" onclick="setSkeleton('spineAlignment', 'Düzgün')" id="btn-skel-spinealign-Düzgün" class="skel-spinealign-btn p-3 border text-left rounded-xl flex flex-col gap-1 border-emerald-500 bg-emerald-50/20">
+                                        <span class="text-xs font-bold text-emerald-800">Düzgün ve Eksenel Dengeli</span>
+                                        <span class="text-[9px] text-gray-500 leading-tight">Ayakta dururken iki taraflı omuzlar yatay hizada.</span>
+                                    </button>
+                                    <button type="button" onclick="setSkeleton('spineAlignment', 'Asimetri Şüphesi')" id="btn-skel-spinealign-Asimetri Şüphesi" class="skel-spinealign-btn p-3 border text-left rounded-xl flex flex-col gap-1 bg-white border-gray-200 hover:bg-slate-50">
+                                        <span class="text-xs font-bold text-slate-800">Hafif Asimetri Şüphesi</span>
+                                        <span class="text-[9px] text-gray-500 leading-tight">Kürek kemiklerinin bir tarafı hafif daha çıkık veya eğik görünümde.</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: POSTURE INPUTS -->
+                    <div id="form-step-2" class="step-pane hidden space-y-6">
+                        <div class="border-b border-gray-100 pb-2">
+                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="activity" class="w-5 h-5 text-emerald-500"></i> Duruş (Postür) Yapısı
+                            </h3>
+                            <p class="text-[11px] text-slate-500">
+                                Vücut postür haritanız, spor dallarındaki fıtık veya omurga risklerini azaltan en önemli göstergedir.
+                            </p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Yandan Bakışta Sırt/Bel Kavisi</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                                    <button type="button" onclick="setPosture('spineCurve', 'Normal')" id="btn-post-curve-Normal" class="post-curve-btn p-3 border text-left text-xs font-bold rounded-xl bg-slate-900 border-slate-900 text-white">Normal Kavis</button>
+                                    <button type="button" onclick="setPosture('spineCurve', 'Lordoz')" id="btn-post-curve-Lordoz" class="post-curve-btn p-3 border text-left text-xs font-bold rounded-xl bg-white border-gray-200 text-slate-700 hover:bg-slate-50">Lordoz (Çukur Bel)</button>
+                                    <button type="button" onclick="setPosture('spineCurve', 'Kifoz')" id="btn-post-curve-Kifoz" class="post-curve-btn p-3 border text-left text-xs font-bold rounded-xl bg-white border-gray-200 text-slate-700 hover:bg-slate-50">Kifoz (Kamburluk)</button>
+                                    <button type="button" onclick="setPosture('spineCurve', 'Skolyoz')" id="btn-post-curve-Skolyoz" class="post-curve-btn p-3 border text-left text-xs font-bold rounded-xl bg-white border-gray-200 text-slate-700 hover:bg-slate-50">Yanal Eğrilik (Skolyoz)</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Omuz Başlarının Konumu</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                                    <button type="button" onclick="setPosture('shoulderPosition', 'Dengeli')" id="btn-post-sh-Dengeli" class="post-sh-btn p-3 border text-left text-xs font-bold rounded-xl bg-slate-900 border-slate-900 text-white">Dengeli / Doğal</button>
+                                    <button type="button" onclick="setPosture('shoulderPosition', 'Sol Düşük')" id="btn-post-sh-Sol Düşük" class="post-sh-btn p-3 border text-left text-xs font-bold rounded-xl bg-white border-gray-200 text-slate-700 hover:bg-slate-50">Sol Omuz Düşük</button>
+                                    <button type="button" onclick="setPosture('shoulderPosition', 'Sağ Düşük')" id="btn-post-sh-Sağ Düşük" class="post-sh-btn p-3 border text-left text-xs font-bold rounded-xl bg-white border-gray-200 text-slate-700 hover:bg-slate-50">Sağ Omuz Düşük</button>
+                                    <button type="button" onclick="setPosture('shoulderPosition', 'Öne Çökük')" id="btn-post-sh-Öne Çökük" class="post-sh-btn p-3 border text-left text-xs font-bold rounded-xl bg-white border-gray-200 text-slate-700 hover:bg-slate-50">Öne Yuvarlanmış</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Kalça (Pelvis) Hizası</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <button type="button" onclick="setPosture('pelvisAlignment', 'Dengeli')" id="btn-post-pel-Dengeli" class="post-pel-btn p-3 border text-left text-xs font-bold rounded-xl bg-slate-900 border-slate-900 text-white">Dengeli Nötr</button>
+                                    <button type="button" onclick="setPosture('pelvisAlignment', 'Öne Eğik')" id="btn-post-pel-Öne Eğik" class="post-pel-btn p-3 border text-left text-xs font-bold rounded-xl bg-white border-gray-200 text-slate-700 hover:bg-slate-50">Anterior Tilt (Öne Eğik)</button>
+                                    <button type="button" onclick="setPosture('pelvisAlignment', 'Arkaya Eğik')" id="btn-post-pel-Arkaya Eğik" class="post-pel-btn p-3 border text-left text-xs font-bold rounded-xl bg-white border-gray-200 text-slate-700 hover:bg-slate-50">Posterior Tilt (Düz Bel)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: MUSCLE PATHOLOGY -->
+                    <div id="form-step-3" class="step-pane hidden space-y-6">
+                        <div class="border-b border-gray-100 pb-2">
+                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="dumbbell" class="w-5 h-5 text-emerald-500"></i> Doku & Somatotip Sınıflandırması
+                            </h3>
+                            <p class="text-[11px] text-slate-500">
+                                Kas lif kalıbınız ve vücut somatotipine en verimli cevabı verecek branşı tespit eder.
+                            </p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Genel Vücut Somatotipiniz</label>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                    <button type="button" onclick="setMuscle('bodyType', 'Ektomorf')" id="btn-mus-bt-Ektomorf" class="mus-bt-btn p-4 border text-left rounded-xl transition-all flex flex-col bg-white border-gray-200">
+                                        <span class="text-xs font-bold text-slate-800">Ektomorf (İnce Yapı)</span>
+                                        <span class="text-[10px] text-gray-500 leading-snug mt-1">Zor kilo alan, ince kemikli. Dayanıklılık sporlarında çok avantajlı.</span>
+                                    </button>
+                                    <button type="button" onclick="setMuscle('bodyType', 'Mezomorf')" id="btn-mus-bt-Mezomorf" class="mus-bt-btn p-4 border text-left rounded-xl transition-all flex flex-col border-emerald-500 bg-emerald-50/20 ring-1 ring-emerald-500">
+                                        <span class="text-xs font-bold text-emerald-800">Mezomorf (Atletik Yapı)</span>
+                                        <span class="text-[10px] text-gray-500 leading-snug mt-1">Hızlı kaslanan, geniş omuzlu darmadağın yağsız yapı. Güç-hız avantajı.</span>
+                                    </button>
+                                    <button type="button" onclick="setMuscle('bodyType', 'Endomorf')" id="btn-mus-bt-Endomorf" class="mus-bt-btn p-4 border text-left rounded-xl transition-all flex flex-col bg-white border-gray-200">
+                                        <span class="text-xs font-bold text-slate-800">Endomorf (Kalın Yapı)</span>
+                                        <span class="text-[10px] text-gray-500 leading-snug mt-1">Kolay kilo ve hacim alan, kalın kemikli yüksek saf mutlak kuvvet gücü.</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Enerji Dominantlığı (Kas Lif Yapı Eğilimi)</label>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                    <button type="button" onclick="setMuscle('muscleFiberType', 'Tip 1')" id="btn-mus-fiber-Tip 1" class="mus-fiber-btn p-3 border text-left rounded-xl flex flex-col bg-white border-gray-200">
+                                        <span class="text-xs font-bold text-slate-800">Tip 1 (Yavaş Kasılan)</span>
+                                        <span class="text-[9px] text-gray-500 leading-tight">Yorulmadan uzun süre temposu sabit koşu/bisiklet yapabilirim.</span>
+                                    </button>
+                                    <button type="button" onclick="setMuscle('muscleFiberType', 'Tip 2')" id="btn-mus-fiber-Tip 2" class="mus-fiber-btn p-3 border text-left rounded-xl flex flex-col bg-white border-gray-200">
+                                        <span class="text-xs font-bold text-slate-800">Tip 2 (Hızlı Kasılan)</span>
+                                        <span class="text-[9px] text-gray-500 leading-tight">Anlık patlayıcı zıplama, hızlı sürat koşusu veya ağır itiş gücüm iyi.</span>
+                                    </button>
+                                    <button type="button" onclick="setMuscle('muscleFiberType', 'Karışık')" id="btn-mus-fiber-Karışık" class="mus-fiber-btn p-3 border text-left rounded-xl flex flex-col border-emerald-500 bg-emerald-50/20 ring-1 ring-emerald-500">
+                                        <span class="text-xs font-bold text-emerald-800">Dengeli / Karışık Lif Tipi</span>
+                                        <span class="text-[9px] text-gray-400 leading-tight">Orta mesafe mukavemet ile kuvvet gerektiren yüklenmelerde dengeliyim.</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Genel Esneklik Seviyeniz</label>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <button type="button" onclick="setMuscle('flexibility', 'Düşük')" id="btn-mus-flex-Düşük" class="mus-flex-btn py-3 px-4 border text-xs font-bold rounded-xl bg-white border-gray-200">Düşük (Sert)</button>
+                                    <button type="button" onclick="setMuscle('flexibility', 'Orta')" id="btn-mus-flex-Orta" class="mus-flex-btn py-3 px-4 border text-xs font-bold rounded-xl bg-slate-900 border-slate-900 text-white shadow-xs">Orta Seviye</button>
+                                    <button type="button" onclick="setMuscle('flexibility', 'Yüksek')" id="btn-mus-flex-Yüksek" class="mus-flex-btn py-3 px-4 border text-xs font-bold rounded-xl bg-white border-gray-200">Yüksek (Esnek)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: BONE AGE & END GOALS -->
+                    <div id="form-step-4" class="step-pane hidden space-y-6">
+                        <div class="border-b border-gray-100 pb-2">
+                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="award" class="w-5 h-5 text-emerald-500"></i> Kemik Yaşı, Eklem ve İdman Hedefleri
+                            </h3>
+                            <p class="text-[11px] text-slate-500">
+                                Fizyolojik olgunluk seviyenizi ve spor yapmadaki temel amacınızı belirtin.
+                            </p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Kemik Yoğunluğu / Olgunluk Eğilimi</label>
+                                    <select id="select-bone-age" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50 outline-none text-xs font-bold">
+                                        <option value="Normal">Yaşla Uyumlu (Normal Kemikleşme)</option>
+                                        <option value="Yavaş">Yavaş Olgunlaşan Yapı (Geç kemik kıkırdak kapanması)</option>
+                                        <option value="Erken">Erken Olgunlaşan Yapı (Erken büyüme plağı kireçlenmesi)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Eklem Hareket Mobilitesi</label>
+                                    <select id="select-joint" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-slate-50 outline-none text-xs font-bold">
+                                        <option value="Normal">Normal Eklem Hareket Açıklığı</option>
+                                        <option value="Hipermobil">Hipermobil (Bağ gevşekliği, aşırı esnek eklemler)</option>
+                                        <option value="Hipomobil">Hipomobil (Eklem sıkışıklığı, sert bağ dokuları)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Ana Spor Hedefiniz</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                    <button type="button" onclick="setGoal('Sağlıklı Yaşam')" id="btn-goal-Sağlıklı Yaşam" class="goal-btn p-3 border text-left text-xs font-bold rounded-xl border-emerald-500 bg-emerald-50/20 text-emerald-800">Sağlıklı Yaşam & Postür</button>
+                                    <button type="button" onclick="setGoal('Profesyonel Seçim')" id="btn-goal-Profesyonel Seçim" class="goal-btn p-3 border text-left text-xs font-bold rounded-xl bg-white border-gray-200">Profesyonel Branş Seçimi</button>
+                                    <button type="button" onclick="setGoal('Kuvvet & Hacim')" id="btn-goal-Kuvvet & Hacim" class="goal-btn p-3 border text-left text-xs font-bold rounded-xl bg-white border-gray-200">Kas İnşası & Güçlenme</button>
+                                    <button type="button" onclick="setGoal('Kilo Verme')" id="btn-goal-Kilo Verme" class="goal-btn p-3 border text-left text-xs font-bold rounded-xl bg-white border-gray-200">Kondisyon & Kilo Verme</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Varsa Geçmiş Sakatlıklar veya Kronik Sorunlar</label>
+                                <input type="text" id="input-injury" placeholder="Alternatif olarak boş bırakabilirsiniz. Sol diz kapak hassasiyeti vb." class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-slate-800 outline-none text-xs bg-slate-50/50" />
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+                <!-- Navigation Controls Footer -->
+                <div class="mt-8 pt-6 border-t border-gray-100 flex justify-between items-center">
+                    <button type="button" id="btn-prev" onclick="movePrev()" disabled class="px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 border bg-slate-50 border-gray-200 text-gray-400 opacity-40 cursor-not-allowed">
+                        <i data-lucide="chevron-left" class="w-4 h-4"></i> Geri
+                    </button>
+
+                    <button type="button" id="btn-next" onclick="moveNext()" class="px-6 py-3 rounded-xl text-xs font-bold flex items-center gap-2 bg-slate-900 text-white hover:bg-slate-800 transition-all shadow-md active:scale-95 cursor-pointer">
+                        <span>İlerle</span> <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- RIGHT INFO BAR & PRESETS CARD -->
+            <div id="sidebar-panel" class="space-y-6 no-print">
+                <!-- Preset Athletes select panel -->
+                <div class="bg-slate-950 text-white rounded-3xl p-6 relative overflow-hidden shadow-md">
+                    <div class="absolute -top-12 -right-12 w-28 h-28 bg-emerald-500/20 rounded-full blur-2xl"></div>
+                    <span class="text-[9px] font-bold text-emerald-400 font-mono tracking-widest block uppercase">Örnek Atletler ile Deneyin</span>
+                    <h4 class="text-base font-extrabold mt-1 tracking-tight">Sporcu Profilleri (Presets)</h4>
+                    <p class="text-[11px] text-slate-400 leading-normal mt-2">
+                        Kinesiyoloji bilim algoritmalarının nasıl çalıştığını hemen görmek için hazır atlet profillerinden birine tıklayın:
+                    </p>
+
+                    <div class="mt-5 space-y-3">
+                        <button onclick="loadSamplePreset('swimmer')" class="w-full text-left p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 transition-all flex items-start gap-2.5 group">
+                            <div class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-emerald-500 group-hover:text-slate-950">
+                                <i data-lucide="sparkles" class="w-3 h-3"></i>
+                            </div>
+                            <div>
+                                <span class="font-bold text-slate-200 text-xs block group-hover:text-white mb-0.5">Uzun Ekstremiteli Su Atleti</span>
+                                <span class="text-[10px] text-slate-400 line-clamp-2">Geniş omuz, uzun kol ve bacaklar, yüksek esneklik.</span>
+                            </div>
+                        </button>
+
+                        <button onclick="loadSamplePreset('wrestler')" class="w-full text-left p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 transition-all flex items-start gap-2.5 group">
+                            <div class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-emerald-500 group-hover:text-slate-950">
+                                <i data-lucide="sparkles" class="w-3 h-3"></i>
+                            </div>
+                            <div>
+                                <span class="font-bold text-slate-200 text-xs block group-hover:text-white mb-0.5">Mesomorph Patlayıcı Güç Atleti</span>
+                                <span class="text-[10px] text-slate-400 line-clamp-2">Kalın iskelet, hızlı kas lifleri, lordoz, halter/güreş potansiyeli.</span>
+                            </div>
+                        </button>
+
+                        <button onclick="loadSamplePreset('deskworker')" class="w-full text-left p-3 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 transition-all flex items-start gap-2.5 group">
+                            <div class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-emerald-500 group-hover:text-slate-950">
+                                <i data-lucide="sparkles" class="w-3 h-3"></i>
+                            </div>
+                            <div>
+                                <span class="font-bold text-slate-200 text-xs block group-hover:text-white mb-0.5">Kondisyon Arayan Ofis Çalışanı</span>
+                                <span class="text-[10px] text-slate-400 line-clamp-2">Sırt ağrılı, orta lif dağılımlı, başlangıç hedefleri.</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Guidance details -->
+                <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-xs">
+                    <h5 class="font-extrabold text-slate-950 text-xs uppercase font-mono mb-3 tracking-wider flex items-center gap-2">
+                        <i data-lucide="info" class="w-4 h-4 text-emerald-500"></i> GELİŞİM ÖLÇÜTLERİ
+                    </h5>
+                    <div class="space-y-4 text-xs text-slate-600 leading-relaxed">
+                        <div>
+                            <strong>• İskelet (Skeletal Matrix):</strong> Kollarınızın ve bacaklarınızın gövdenize oranı moment basamağı belirler. Uzun kol yüzerken çekiş alanı sunarken, kısa kollar ve bacaklar çömelme stabilitesini kaldırır.
+                        </div>
+                        <div>
+                            <strong>• Postür Eğrilikleri:</strong> Kamburluk (kifoz) veya bel çukurluğu (lordoz), omurgaya dikey yük bindiren ağırlık antrenmanlarında fıtık riski doğurur. Bu uygulamada asimetriyi düzeltici egzersizler geliştirilir.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESULTS WORKSPACE (HIDDEN ON START) -->
+            <div id="results-workspace" class="hidden lg:col-span-4 space-y-8 animate-fade-in">
+                
+                <!-- TOP HEADER BOX -->
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-slate-900 text-white rounded-3xl p-6 md:p-8 shadow-md">
+                    <div>
+                        <span class="px-3 py-1 text-[11px] font-bold bg-emerald-500/20 text-emerald-300 rounded-full border border-emerald-500/30 uppercase tracking-widest font-mono">
+                            Kinesiyoloji Sonuçları Hazır
+                        </span>
+                        <h2 class="text-xl md:text-3xl font-extrabold mt-2 tracking-tight">
+                            Biyomekanik ve Spor Yönlendirme Analizi
+                        </h2>
+                        <p class="text-xs text-slate-300 mt-1 max-w-xl">
+                            İskelet, postür, kas lif yapınız ve eklem mobiliteniz yerel uzman algoritmamız ile sentezlendi.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-2 w-full md:w-auto no-print">
+                        <button onclick="resetApp()" class="flex-1 md:flex-initial px-4 py-2.5 border border-slate-700 hover:border-slate-500 text-xs font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all hover:bg-slate-800">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Yeni Baştan Başla
+                        </button>
+                        <button onclick="window.print()" class="flex-1 md:flex-initial px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-xs font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all border border-slate-700 text-slate-200">
+                            <i data-lucide="printer" class="w-3.5 h-3.5"></i> PDF Olarak Yazdır
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TWO COLUMN LAYOUT: SPORTS CHOSEN vs INTERACTIVE BIOMECH SKELETON -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <!-- LEFT COLUMN: TOP SPORTS RECOMMENDED -->
+                    <div class="lg:col-span-2 space-y-8">
+                        <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-xs">
+                            <h3 class="text-base font-extrabold text-slate-900 mb-5 flex items-center gap-2">
+                                <i data-lucide="trophy" class="w-5 h-5 text-emerald-500"></i> Fiziksel Formunuza En Çok Uyan 3 Spor Branşı
+                            </h3>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="recommended-sports-list">
+                                <!-- Triggered inside JavaScript -->
+                            </div>
+
+                            <!-- ADVANTAGE & DISADVANTAGE CRITERIA DISPLAY -->
+                            <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100 mt-6" id="sport-details-pane">
+                                <!-- Filled by JS -->
+                            </div>
+                        </div>
+
+                        <!-- 3D INTERACTIVE SVG VISUALIZER -->
+                        <div class="space-y-4">
+                            <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="heart" class="w-5 h-5 text-emerald-500"></i> İnteraktif İskelet & Postür Modeli
+                            </h3>
+                            
+                            <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-xs flex flex-col md:flex-row gap-6">
+                                <!-- Visual model side -->
+                                <div class="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50/50 rounded-2xl relative min-h-[340px]">
+                                    <div class="absolute top-3 left-4 flex items-center gap-1.5 text-[9px] text-slate-400 font-mono tracking-wider">
+                                        <i data-lucide="activity" class="w-3.5 h-3.5 text-emerald-500 animate-pulse"></i> VÜCUT HARİTASI
+                                    </div>
+
+                                    <!-- Interactive SVG representation -->
+                                    <svg viewBox="-20 0 240 400" id="anatomical-svg" class="w-full max-w-[170px] h-auto drop-shadow-md select-none">
+                                        <!-- Central grid line -->
+                                        <line x1="100" y1="0" x2="100" y2="400" stroke="#cbd5e1" stroke-dasharray="3,3" />
+
+                                        <!-- Head -->
+                                        <circle cx="100" cy="50" r="16" class="fill-slate-250 stroke-slate-300" stroke-width="2" />
+                                        <!-- Neck -->
+                                        <line x1="100" y1="66" x2="100" y2="80" stroke="#94a3b8" stroke-width="4" />
+
+                                        <!-- Shoulders -->
+                                        <g class="cursor-pointer" onclick="selectVisualZone('shoulders')">
+                                            <path id="svg-shoulders-path" d="M 60 80 L 140 80" stroke="#2563eb" stroke-width="4" />
+                                            <circle cx="58" cy="80" r="8" id="svg-shoulder-l" class="fill-indigo-500" />
+                                            <circle cx="142" cy="80" r="8" id="svg-shoulder-r" class="fill-indigo-500" />
+                                        </g>
+
+                                        <!-- Spine -->
+                                        <g class="cursor-pointer" onclick="selectVisualZone('spine')">
+                                            <path id="svg-spine-path" d="M 100 80 L 100 230" fill="none" stroke="#10b981" stroke-width="5" stroke-linecap="round" />
+                                            <circle cx="100" cy="115" r="3" class="fill-slate-400" />
+                                            <circle cx="100" cy="145" r="3" class="fill-slate-400" />
+                                            <circle cx="100" cy="175" r="3" class="fill-slate-400" />
+                                            <circle cx="100" cy="205" r="3" class="fill-slate-400" />
+                                        </g>
+
+                                        <!-- Pelvis/Hip -->
+                                        <g class="cursor-pointer" onclick="selectVisualZone('pelvis')">
+                                            <polygon points="65,230 135,230 120,255 80,255" class="fill-indigo-100 stroke-slate-300" stroke-width="2" />
+                                            <line x1="63" y1="230" x2="137" y2="230" id="svg-pelvis-line" stroke="#ef4444" stroke-width="4" />
+                                        </g>
+
+                                        <!-- Arms -->
+                                        <g class="opacity-60">
+                                            <line x1="58" y1="84" x2="42" y2="150" stroke="#94a3b8" stroke-width="4" />
+                                            <line x1="42" y1="150" x2="33" y2="210" stroke="#94a3b8" stroke-width="4" />
+                                            <line x1="142" y1="84" x2="158" y2="150" stroke="#94a3b8" stroke-width="4" />
+                                            <line x1="158" y1="150" x2="167" y2="210" stroke="#94a3b8" stroke-width="4" />
+                                        </g>
+
+                                        <!-- Legs -->
+                                        <g class="cursor-pointer" onclick="selectVisualZone('limbs')">
+                                            <line x1="70" y1="245" x2="72" y2="310" stroke="#475569" stroke-width="5" />
+                                            <line x1="72" y1="310" x2="74" y2="375" stroke="#475569" stroke-width="5" />
+                                            <line x1="130" y1="245" x2="128" y2="310" stroke="#475569" stroke-width="5" />
+                                            <line x1="128" y1="310" x2="126" y2="375" stroke="#475569" stroke-width="5" />
+                                        </g>
+                                    </svg>
+                                    
+                                    <div class="mt-4 flex gap-3 text-[10px] text-slate-400 font-mono">
+                                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Stabil</span>
+                                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span> Dikkat</span>
+                                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span> Risk</span>
+                                    </div>
+                                </div>
+
+                                <!-- Explanation side of visualizer -->
+                                <div class="flex-1 flex flex-col justify-between">
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-400 font-mono uppercase tracking-wider mb-2">Simülasyon Değerlendirmesi</h4>
+                                        <p class="text-xs text-slate-500 mb-4">Grafikteki omuz, omurga veya pelvis bölgelerine tıklayarak ölçüm detaylarını okuyabilirsiniz.</p>
+
+                                        <div id="visual-details-card" class="bg-slate-50 rounded-xl p-4 border-l-4 border-emerald-500">
+                                            <!-- Dynamic via JS -->
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 gap-3">
+                                        <div class="bg-slate-50 rounded-lg p-2.5 text-xs">
+                                            <span class="text-[9px] text-slate-400 font-mono block">Somatotip</span>
+                                            <b id="lbl-somatotip" class="text-slate-800">Mezomorf</b>
+                                        </div>
+                                        <div class="bg-slate-50 rounded-lg p-2.5 text-xs">
+                                            <span class="text-[9px] text-slate-400 font-mono block">Kas Esnekliği</span>
+                                            <b id="lbl-esneklik" class="text-slate-800">Orta</b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT COLUMN: CLINICAL DIAGNOSTICS -->
+                    <div class="space-y-6">
+                        <div class="bg-white border border-gray-100 rounded-3xl p-6 shadow-xs space-y-5">
+                            <h3 class="text-base font-extrabold text-slate-900 pb-3 border-b border-gray-100 flex items-center gap-2">
+                                <i data-lucide="award" class="w-4 h-4 text-emerald-500"></i> Biyomekanik Klinik Bulguları
+                            </h3>
+
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-bold text-slate-400 font-mono uppercase block">1. Extremity Leverage Analysis</span>
+                                <p id="cl-skeletal-rep" class="text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100 leading-relaxed">
+                                    Yeterli kaldıraç gücüne elverişli boy-kol oranı.
+                                </p>
+                            </div>
+
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-bold text-slate-400 font-mono uppercase block">2. Postural Emniyet & Eksen</span>
+                                <div class="text-xs text-red-800 leading-relaxed bg-red-50 p-3 rounded-xl border border-red-100/50 flex gap-2">
+                                    <i data-lucide="shield-alert" class="w-4 h-4 text-red-500 shrink-0 mt-0.5"></i>
+                                    <span id="cl-posture-rep">Sol omuzun hafif düşük yapısı yüzme esnasında tek kanat gerilimi yaratabilir.</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-bold text-slate-400 font-mono uppercase block">3. Lif Hakimiyeti & Toksin Eşiği</span>
+                                <p id="cl-muscle-rep" class="text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-100 leading-relaxed">
+                                    Yavaş kasılan lifler laktat birikimini geciktirir.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Info tag box -->
+                        <div class="bg-slate-50 border border-slate-150 rounded-2xl p-4 text-[11px] leading-relaxed text-slate-500">
+                            <strong>Bilgi:</strong> Yapılan yönlendirmeler Kinesiyoloji ana tüzüğü, kaldıraç biyofiziği ve egzersiz fizyolojisi teorileri temel alınarak yapılmaktadır.
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- WEEKLY WORKOUT AND TRAINING SCHEDULE -->
+                <div class="bg-white border border-gray-100 rounded-3xl p-6 md:p-8 shadow-xs">
+                    
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-gray-100 mb-6">
+                        <div>
+                            <span class="px-3 py-1 text-[10px] font-bold bg-blue-100 text-blue-700 rounded-full border border-blue-200 uppercase tracking-wider font-mono">Kişiselleştirilmiş Program</span>
+                            <h3 className="text-xl md:text-2xl font-extrabold mt-2 text-slate-900 tracking-tight flex items-center gap-2" class="text-lg md:text-2xl font-extrabold text-slate-900 mt-2">
+                                Haftalık Gelişim İdman Takvimi
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">
+                                Hedef branşınıza adaptasyon için <strong id="lbl-sched-duration">8 hafta</strong> boyunca önerilen sistemli reçete.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Day selectors selection tab -->
+                    <div class="flex flex-wrap gap-2 p-1.5 bg-slate-50 rounded-2xl border border-slate-100 mb-6 font-mono font-bold text-xs">
+                        <button onclick="setScheduleDay('Pazartesi')" id="btn-day-Pazartesi" class="sched-day-btn text-xs font-bold py-2 px-3 grow text-center rounded-xl bg-slate-900 text-white shadow-xs">Pazartesi</button>
+                        <button onclick="setScheduleDay('Salı')" id="btn-day-Salı" class="sched-day-btn text-xs font-bold py-2 px-3 grow text-center rounded-xl text-slate-600 hover:bg-slate-200/50">Salı</button>
+                        <button onclick="setScheduleDay('Çarşamba')" id="btn-day-Çarşamba" class="sched-day-btn text-xs font-bold py-2 px-3 grow text-center rounded-xl text-slate-600 hover:bg-slate-200/50">Çarşamba</button>
+                        <button onclick="setScheduleDay('Perşembe')" id="btn-day-Perşembe" class="sched-day-btn text-xs font-bold py-2 px-3 grow text-center rounded-xl text-slate-600 hover:bg-slate-200/50">Perşembe</button>
+                        <button onclick="setScheduleDay('Cuma')" id="btn-day-Cuma" class="sched-day-btn text-xs font-bold py-2 px-3 grow text-center rounded-xl text-slate-600 hover:bg-slate-200/50">Cuma</button>
+                        <button onclick="setScheduleDay('Cumartesi')" id="btn-day-Cumartesi" class="sched-day-btn text-xs font-bold py-2 px-3 grow text-center rounded-xl text-slate-600 hover:bg-slate-200/50">Cumartesi</button>
+                        <button onclick="setScheduleDay('Pazar')" id="btn-day-Pazar" class="sched-day-btn text-xs font-bold py-2 px-3 grow text-center rounded-xl text-slate-600 hover:bg-slate-200/50">Pazar</button>
+                    </div>
+
+                    <!-- DAY WORKOUT PANEL -->
+                    <div class="bg-slate-50/50 rounded-2xl p-5 md:p-6 border border-slate-100 min-h-[190px]">
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200/50">
+                            <div>
+                                <span class="text-[10px] text-slate-400 uppercase font-mono block">GÜNLÜK ODAK</span>
+                                <h4 id="lbl-workout-title" class="text-sm font-extrabold text-slate-900">Merkez Bölge Stabilitesi</h4>
+                            </div>
+                            <span id="lbl-workout-status" class="px-2.5 py-0.5 rounded-full text-xs font-bold border bg-emerald-50 text-emerald-700 border-emerald-100">Antrenman</span>
+                        </div>
+
+                        <!-- EXERCISES INTERACTIVE GRID -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="js-exercises-container">
+                            <!-- Injected inside script -->
+                        </div>
+                    </div>
+
+                    <!-- NUTRITION & MOBILITY EXTRA ROW -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 pt-6 border-t border-slate-100 text-xs">
+                        <!-- Nutrition -->
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                            <h4 class="font-bold text-xs text-slate-800 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                                <i data-lucide="apple" class="w-4 h-4 text-emerald-500"></i> Somatik Model Beslenme Önerisi
+                            </h4>
+                            <ul class="space-y-2 text-slate-700" id="nutrition-advices-list">
+                                <!-- Dynamic JS -->
+                            </ul>
+                        </div>
+                        <!-- Mobility recovery -->
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                            <h4 class="font-bold text-xs text-slate-800 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-emerald-500"></i> Düzeltici Esneme ve Mobilizasyon
+                            </h4>
+                            <ul class="space-y-2 text-slate-700" id="recovery-advices-list">
+                                <!-- Dynamic JS -->
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- CLINICAL LIABILITY ADVICE -->
+                <div class="bg-slate-50 border border-slate-100 rounded-xl p-4 text-center text-[10px] text-slate-400 hover:text-slate-500 transition-colors">
+                     Bu sistem, girilen iskelet ve postüral ölçütlere dayalı bilimsel bir kinesiyolojik yönlendirme simülasyonudur. Şüpheli omurga ağrıları yaşıyorsanız idman programlarına başlamadan önce mutlaka fizik tedavi hekimine danışınız.
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-gray-150 bg-white py-6 mt-12 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+            <div>
+                © 2026 Sporterra Spor Bilimi Laboratuvarı. GitHub Açık Kaynak Projesidir.
+            </div>
+            <div class="flex items-center gap-2">
+                <span>Tıp & Fizik Tedavi Standartlarına Uyumlu Model.</span>
+                <i data-lucide="heart" class="w-3.5 h-3.5 text-red-500 fill-red-500 animate-pulse"></i>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ==================== CORE KINESIOLOGIC EXPERT ENGINE (JAVASCRIPT) ==================== -->
+    <script>
+        // Form states
+        let currentStep = 0;
+        const totalSteps = 5;
+
+        // Form answers object initialized with middle values
+        const answers = {
+            general: { gender: "Erkek", age: 24, height: 180, weight: 75, fitnessLevel: "Orta" },
+            skeleton: { shoulderWidth: "Orta", hipWidth: "Orta", limbLengthRatio: "Ortalama", spineAlignment: "Düzgün" },
+            posture: { spineCurve: "Normal", shoulderPosition: "Dengeli", pelvisAlignment: "Dengeli" },
+            muscle: { bodyType: "Mezomorf", muscleFiberType: "Karışık", flexibility: "Orta" },
+            boneAge: { suspectedBoneAge: "Normal", jointMobility: "Normal" },
+            goals: { mainGoals: "Sağlıklı Yaşam", injuryHistory: "" }
+        };
+
+        // Trigger lucide icon compilation
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+            goToStep(0);
+        });
+
+        // Form setters helpers
+        function setGender(val) {
+            answers.general.gender = val;
+            document.querySelectorAll('.gender-btn').forEach(btn => {
+                btn.classList.add('bg-white', 'text-gray-700', 'border-gray-200');
+                btn.classList.remove('bg-slate-900', 'text-white', 'border-slate-900', 'shadow-xs');
+            });
+            const selected = document.getElementById(`btn-gender-${val}`);
+            if (selected) {
+                selected.classList.remove('bg-white', 'text-gray-700', 'border-gray-200');
+                selected.classList.add('bg-slate-900', 'text-white', 'border-slate-900', 'shadow-xs');
+            }
+        }
+
+        function setFitness(val) {
+            answers.general.fitnessLevel = val;
+            document.querySelectorAll('.fit-btn').forEach(btn => {
+                btn.classList.add('bg-white', 'border-gray-200');
+                btn.classList.remove('border-emerald-500', 'bg-emerald-50/25', 'ring-1', 'ring-emerald-500');
+                // fix fonts
+                const span = btn.querySelector('span:first-child');
+                if (span) {
+                    span.classList.add('text-slate-800');
+                    span.classList.remove('text-emerald-700');
+                }
+            });
+            const selected = document.getElementById(`btn-fit-${val}`);
+            if (selected) {
+                selected.classList.remove('bg-white', 'border-gray-200');
+                selected.classList.add('border-emerald-500', 'bg-emerald-50/25', 'ring-1', 'ring-emerald-500');
+                const span = selected.querySelector('span:first-child');
+                if (span) {
+                    span.classList.remove('text-slate-800');
+                    span.classList.add('text-emerald-700');
+                }
+            }
+        }
+
+        function setSkeleton(field, val) {
+            answers.skeleton[field] = val;
+            document.querySelectorAll(`.skel-${field}-btn`).forEach(btn => {
+                btn.classList.add('bg-white', 'border-gray-200', 'text-slate-700');
+                btn.classList.remove('bg-slate-900', 'border-slate-900', 'text-white', 'border-emerald-500', 'bg-emerald-50/20', 'text-emerald-800', 'shadow-xs');
+            });
+            const id = `btn-skel-${field}-${val}`;
+            const selected = document.getElementById(id);
+            if (selected) {
+                if (field === 'limbLengthRatio' || field === 'spineAlignment') {
+                    selected.classList.remove('bg-white', 'border-gray-200');
+                    selected.classList.add('border-emerald-500', 'bg-emerald-50/20');
+                    selected.querySelector('span:first-child').classList.add('text-emerald-800');
+                } else {
+                    selected.classList.remove('bg-white', 'border-gray-200', 'text-slate-700');
+                    selected.classList.add('bg-slate-900', 'border-slate-900', 'text-white', 'shadow-xs');
+                }
+            }
+        }
+
+        function setPosture(field, val) {
+            answers.posture[field] = val;
+            document.querySelectorAll(`.post-${field === 'spineCurve' ? 'curve' : field === 'shoulderPosition' ? 'sh' : 'pel'}-btn`).forEach(btn => {
+                btn.classList.add('bg-white', 'border-gray-200', 'text-slate-700');
+                btn.classList.remove('bg-slate-900', 'border-slate-900', 'text-white');
+            });
+            const sub = field === 'spineCurve' ? 'curve' : field === 'shoulderPosition' ? 'sh' : 'pel';
+            const id = `btn-post-${sub}-${val}`;
+            const selected = document.getElementById(id);
+            if (selected) {
+                selected.classList.remove('bg-white', 'border-gray-200', 'text-slate-700');
+                selected.classList.add('bg-slate-900', 'border-slate-900', 'text-white');
+            }
+        }
+
+        function setMuscle(field, val) {
+            answers.muscle[field] = val;
+            document.querySelectorAll(`.mus-${field === 'bodyType' ? 'bt' : field === 'muscleFiberType' ? 'fiber' : 'flex'}-btn`).forEach(btn => {
+                btn.classList.add('bg-white', 'border-gray-200');
+                // For flexible buttons removing color classes
+                btn.classList.remove('border-emerald-500', 'bg-emerald-50/20', 'ring-1', 'ring-emerald-500', 'bg-slate-900', 'border-slate-900', 'text-white', 'shadow-xs');
+                const head = btn.querySelector('span:first-child');
+                if (head) {
+                    head.classList.add('text-slate-800');
+                    head.classList.remove('text-emerald-800');
+                }
+            });
+            const sub = field === 'bodyType' ? 'bt' : field === 'muscleFiberType' ? 'fiber' : 'flex';
+            const id = `btn-mus-${sub}-${val}`;
+            const selected = document.getElementById(id);
+            if (selected) {
+                if (field === 'flexibility') {
+                    selected.classList.remove('bg-white', 'border-gray-200');
+                    selected.classList.add('bg-slate-900', 'border-slate-900', 'text-white', 'shadow-xs');
+                } else {
+                    selected.classList.remove('bg-white', 'border-gray-200');
+                    selected.classList.add('border-emerald-500', 'bg-emerald-50/20', 'ring-1', 'ring-emerald-500');
+                    const head = selected.querySelector('span:first-child');
+                    if (head) {
+                        head.classList.remove('text-slate-800');
+                        head.classList.add('text-emerald-800');
+                    }
+                }
+            }
+        }
+
+        function setGoal(val) {
+            answers.goals.mainGoals = val;
+            document.querySelectorAll('.goal-btn').forEach(btn => {
+                btn.classList.add('bg-white', 'border-gray-200');
+                btn.classList.remove('border-emerald-500', 'bg-emerald-50/20', 'text-emerald-800');
+            });
+            const selected = document.getElementById(`btn-goal-${val}`);
+            if (selected) {
+                selected.classList.remove('bg-white', 'border-gray-200');
+                selected.classList.add('border-emerald-500', 'bg-emerald-50/20', 'text-emerald-800');
+            }
+        }
+
+        // Stepper mechanics
+        function goToStep(idx) {
+            // Hide all steps
+            for (let i = 0; i < totalSteps; i++) {
+                const pane = document.getElementById(`form-step-${i}`);
+                if (pane) pane.classList.add('hidden');
+                
+                // Reset step badge designs
+                const badge = document.getElementById(`step-badge-${i}`);
+                if (badge) {
+                    badge.classList.remove('bg-slate-900', 'border-slate-900', 'text-white', 'shadow-md', 'ring-4', 'ring-slate-100', 'bg-emerald-500', 'border-emerald-500');
+                    badge.classList.add('bg-white', 'border-gray-200', 'text-gray-400');
+                }
+                const label = document.getElementById(`step-text-${i}`);
+                if (label) {
+                    label.classList.remove('text-slate-900', 'font-bold');
+                    label.classList.add('text-gray-400', 'font-medium');
+                }
+            }
+
+            // Show active step
+            const activePane = document.getElementById(`form-step-${idx}`);
+            if (activePane) activePane.classList.remove('hidden');
+
+            // Style active badge
+            const activeBadge = document.getElementById(`step-badge-${idx}`);
+            if (activeBadge) {
+                activeBadge.classList.remove('bg-white', 'border-gray-200', 'text-gray-400');
+                activeBadge.classList.add('bg-slate-900', 'border-slate-900', 'text-white', 'shadow-md', 'ring-4', 'ring-slate-100');
+            }
+            const activeLabel = document.getElementById(`step-text-${idx}`);
+            if (activeLabel) {
+                activeLabel.classList.remove('text-gray-400', 'font-medium');
+                activeLabel.classList.add('text-slate-900', 'font-bold');
+            }
+
+            // Style completed steps up to idx
+            for (let k = 0; k < idx; k++) {
+                const checkedBadge = document.getElementById(`step-badge-${k}`);
+                if (checkedBadge) {
+                    checkedBadge.classList.add('bg-emerald-500', 'border-emerald-500', 'text-white');
+                }
+            }
+
+            currentStep = idx;
+
+            // Handle bottom buttons states
+            const prevBtn = document.getElementById('btn-prev');
+            const nextBtn = document.getElementById('btn-next');
+            
+            if (idx === 0) {
+                prevBtn.setAttribute('disabled', 'true');
+                prevBtn.classList.add('opacity-40', 'cursor-not-allowed');
+            } else {
+                prevBtn.removeAttribute('disabled');
+                prevBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+            }
+
+            if (idx === totalSteps - 1) {
+                nextBtn.innerHTML = `<span>HESAPLA & SPOR BUL!</span> <i data-lucide="flame" class="w-4 h-4 text-orange-400 animate-pulse"></i>`;
+            } else {
+                nextBtn.innerHTML = `<span>İlerle</span> <i data-lucide="chevron-right" class="w-4 h-4"></i>`;
+            }
+            
+            // Adjust step line width
+            const line = document.getElementById('stepper-line');
+            if (line) {
+                line.style.width = `${(idx / (totalSteps - 1)) * 100}%`;
+            }
+
+            // Refresh lucide icons
+            lucide.createIcons();
+            document.getElementById('validation-alert').classList.add('hidden');
+        }
+
+        function validateCurrentStep() {
+            if (currentStep === 0) {
+                const age = parseInt(document.getElementById('input-age').value);
+                const height = parseInt(document.getElementById('input-height').value);
+                const weight = parseInt(document.getElementById('input-weight').value);
+
+                if (isNaN(age) || age < 5 || age > 100) {
+                    showError("Geçerli bir yaş giriniz (5-100).");
+                    return false;
+                }
+                if (isNaN(height) || height < 100 || height > 230) {
+                    showError("Geçerli bir boy giriniz (100cm - 230cm).");
+                    return false;
+                }
+                if (isNaN(weight) || weight < 25 || weight > 200) {
+                    showError("Geçerli bir ağırlık değeri giriniz (25kg - 200kg).");
+                    return false;
+                }
+                answers.general.age = age;
+                answers.general.height = height;
+                answers.general.weight = weight;
+            }
+            return true;
+        }
+
+        function showError(msg) {
+            const container = document.getElementById('validation-alert');
+            const label = document.getElementById('validation-msg');
+            label.textContent = msg;
+            container.classList.remove('hidden');
+            window.scrollTo({ top: container.offsetTop - 80, behavior: 'smooth' });
+        }
+
+        function moveNext() {
+            if (validateCurrentStep()) {
+                if (currentStep < totalSteps - 1) {
+                    goToStep(currentStep + 1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    // Trigger Expert Analysis Generator
+                    generateAnalysisResults();
+                }
+            }
+        }
+
+        function movePrev() {
+            if (currentStep > 0) {
+                goToStep(currentStep - 1);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // PRESET LOADER SHORTCUTS
+        function loadSamplePreset(type) {
+            if (type === 'swimmer') {
+                document.getElementById('input-age').value = 19;
+                document.getElementById('input-height').value = 188;
+                document.getElementById('input-weight').value = 77;
+                setGender('Erkek');
+                setFitness('Orta');
+                setSkeleton('shoulderWidth', 'Geniş');
+                setSkeleton('hipWidth', 'Dar');
+                setSkeleton('limbLengthRatio', 'Uzun');
+                setSkeleton('spineAlignment', 'Düzgün');
+                setPosture('spineCurve', 'Normal');
+                setPosture('shoulderPosition', 'Dengeli');
+                setPosture('pelvisAlignment', 'Dengeli');
+                setMuscle('bodyType', 'Ektomorf');
+                setMuscle('muscleFiberType', 'Tip 1');
+                setMuscle('flexibility', 'Yüksek');
+                document.getElementById('select-bone-age').value = "Normal";
+                document.getElementById('select-joint').value = "Hipermobil";
+                setGoal('Profesyonel Seçim');
+                document.getElementById('input-injury').value = "Mükemmel kondisyon, hafif omuz esnekliği.";
+            } else if (type === 'wrestler') {
+                document.getElementById('input-age').value = 22;
+                document.getElementById('input-height').value = 174;
+                document.getElementById('input-weight').value = 83;
+                setGender('Erkek');
+                setFitness('İleri');
+                setSkeleton('shoulderWidth', 'Geniş');
+                setSkeleton('hipWidth', 'Geniş');
+                setSkeleton('limbLengthRatio', 'Kısa');
+                setSkeleton('spineAlignment', 'Düzgün');
+                setPosture('spineCurve', 'Lordoz');
+                setPosture('shoulderPosition', 'Öne Çökük');
+                setPosture('pelvisAlignment', 'Öne Eğik');
+                setMuscle('bodyType', 'Mezomorf');
+                setMuscle('muscleFiberType', 'Tip 2');
+                setMuscle('flexibility', 'Düşük');
+                document.getElementById('select-bone-age').value = "Erken";
+                document.getElementById('select-joint').value = "Hipomobil";
+                setGoal('Kuvvet & Hacim');
+                document.getElementById('input-injury').value = "Bel kaslarında zaman zaman gerilmelere bağlı sertlik mevcut.";
+            } else if (type === 'deskworker') {
+                document.getElementById('input-age').value = 28;
+                document.getElementById('input-height').value = 165;
+                document.getElementById('input-weight').value = 58;
+                setGender('Kadın');
+                setFitness('Başlangıç');
+                setSkeleton('shoulderWidth', 'Orta');
+                setSkeleton('hipWidth', 'Orta');
+                setSkeleton('limbLengthRatio', 'Ortalama');
+                setSkeleton('spineAlignment', 'Düzgün');
+                setPosture('spineCurve', 'Kifoz');
+                setPosture('shoulderPosition', 'Öne Çökük');
+                setPosture('pelvisAlignment', 'Dengeli');
+                setMuscle('bodyType', 'Ektomorf');
+                setMuscle('muscleFiberType', 'Karışık');
+                setMuscle('flexibility', 'Düşük');
+                document.getElementById('select-bone-age').value = "Normal";
+                document.getElementById('select-joint').value = "Normal";
+                setGoal('Sağlıklı Yaşam');
+                document.getElementById('input-injury').value = "Masa başında uzun oturmaktan kaynaklı sırt ve boyun ağrıları.";
+            }
+            goToStep(0);
+        }
+
+        // BIOMECHANICAL EXPERT SYSTEM LOGIC (Kinesiology AI Rule Engine)
+        let generatedResult = null;
+        let selectedReportDay = "Pazartesi";
+        let activeSportIndex = 0;
+
+        function generateAnalysisResults() {
+            // Apply text areas inputs
+            answers.goals.injuryHistory = document.getElementById('input-injury').value.trim() || "Belirtilmemiş";
+            answers.boneAge.suspectedBoneAge = document.getElementById('select-bone-age').value;
+            answers.boneAge.jointMobility = document.getElementById('select-joint').value;
+
+            // Compute Sport Scores based on biomechanical rules
+            const sports = [];
+            
+            // Branch 1: Swimming & Rowing (Hydro-leverage)
+            let swimScore = 55;
+            if (answers.skeleton.shoulderWidth === 'Geniş') swimScore += 15;
+            if (answers.skeleton.hipWidth === 'Dar') swimScore += 10;
+            if (answers.skeleton.limbLengthRatio === 'Uzun') swimScore += 15;
+            if (answers.muscle.flexibility === 'Yüksek') swimScore += 10;
+            if (answers.muscle.muscleFiberType === 'Tip 1') swimScore += 10;
+
+            sports.push({
+                sportName: "Olimpik Yüzme & Kürek",
+                matchScore: Math.min(swimScore, 98),
+                suitabilityReason: "Geniş omuz ve dar kalça kemik çatınız, suyun hidrodinamik direncini düşürerek uzun kaldırma alanları yaratır.",
+                pros: [
+                    `${answers.skeleton.shoulderWidth} omuz yapısı geniş hidrodinamik çekiş sunar.`,
+                    `${answers.skeleton.limbLengthRatio} kol ve bacaklar kulaç mesafesini üst seviyeye çıkarır.`,
+                    `${answers.muscle.muscleFiberType === 'Tip 1' ? 'Yavaş kasılan lifler laktat birikimini geciktirerek dayanıklılık sunar.' : 'Uyumlu lif kurgusu çoklu faza elverişlidir.'}`
+                ],
+                cons: [
+                    answers.posture.shoulderPosition.includes('Öne') ? "Yassılaşma tehlikesine karşı sırt omurgasının düzgün tutulması gereklidir." : "Herhangi bir omuz sakatlığı riski bulunmamaktadır."
+                ]
+            });
+
+            // Branch 2: Powerlifting, Weightlifting & Wrestling (Anabolic leverage)
+            let liftingScore = 50;
+            if (answers.skeleton.shoulderWidth === 'Geniş') liftingScore += 10;
+            if (answers.skeleton.hipWidth === 'Geniş') liftingScore += 15;
+            if (answers.skeleton.limbLengthRatio === 'Kısa') liftingScore += 15;
+            if (answers.muscle.bodyType === 'Mezomorf') liftingScore += 10;
+            if (answers.muscle.muscleFiberType === 'Tip 2') liftingScore += 20;
+            if (answers.muscle.flexibility === 'Düşük') liftingScore += 5; // stiff bones sometimes help transfer force
+
+            sports.push({
+                sportName: "Powerlifting & Güreş",
+                matchScore: Math.min(liftingScore, 97),
+                suitabilityReason: "Kalın iskelet mekaniğiniz ve kısa ekstremite kaldıraçlarınız, yüksek dikey tork torku oluşturarak halter ve yer temas stabilizasyonunu artırır.",
+                pros: [
+                    `${answers.skeleton.limbLengthRatio} kollar dikey eksende dambıl/barda kat edilecek mesafeyi kısaltır.`,
+                    `${answers.muscle.bodyType} somatotip kas kütlesi tutma kapasitesini maksimuma çıkarır.`,
+                    `Geniş kalça kemik yapısı çömelme (squat) esnasında ağır yük taşımayı kolaylaştırır.`
+                ],
+                cons: [
+                    answers.posture.spineCurve.includes('Lordoz') ? "Lomber kavis çukurluğu nedeniyle aşırı squat ve deadliftlerde bel kemeri takılması şarttır." : "Omurga yapısı dikey tork yükünü başarıyla sönümlüyor."
+                ]
+            });
+
+            // Branch 3: Athletics & Distance Running (Aerobic propulsion)
+            let runningScore = 60;
+            if (answers.skeleton.hipWidth === 'Dar') runningScore += 15;
+            if (answers.muscle.bodyType === 'Ektomorf') runningScore += 15;
+            if (answers.muscle.muscleFiberType === 'Tip 1') runningScore += 20;
+            if (answers.skeleton.limbLengthRatio === 'Uzun') runningScore += 10;
+
+            sports.push({
+                sportName: "Atletizm & Orta-Uzun Koşu",
+                matchScore: Math.min(runningScore, 96),
+                suitabilityReason: "İnce kemik çatınız ve hafif omuz-kalça yapınız, koşu esnasında adım verimliliğinizi ve oksijen sönümleme kapasitenizi üst seviyeye taşır.",
+                pros: [
+                    `Ektomorf/ince vücut yapısı sayesinde kardiyo yükü ve eklem baskısı düşüktür.`,
+                    `Dar kalça kemiği doğrusal lokomotor hızda adım kaybını sıfırlayarak momentumu korur.`
+                ],
+                cons: [
+                    answers.posture.spineCurve.includes('Kifoz') ? "Kambur duruş, akciğer genleşme hacmini sınırlandırarak VO2 Max kapasitenizi düşürebilir." : "Dengeli göğüs kafesi omurgası derin nefes alımını destekliyor."
+                ]
+            });
+
+            // Sort by Match Score
+            sports.sort((a,b) => b.matchScore - a.matchScore);
+
+            const chosenSport = sports[0].sportName;
+
+            // Generate full weekly training schedule database
+            const schedules = {
+                "Olimpik Yüzme & Kürek": [
+                    { day: "Pazartesi", status: "Antrenman", title: "Su İçi Temel Kondisyon %65 HR", exercises: [
+                        { name: "Serbest Stil Aerobik Yüzme", sets: "4 set x 200 Metre", rest: "90 sn", intensity: "Orta", instructions: "Omuzlarınızı zorlamadan geniş kulaçla çekin." },
+                        { name: "Sculling (Su hissi çalışması)", sets: "3 set x 50 Metre", rest: "60 sn", intensity: "Hafif", instructions: "Avuç içi su basıncını hissetmeye odaklanın." }
+                    ]},
+                    { day: "Salı", status: "Antrenman", title: "Üst Vücut Çekiş Gücü", exercises: [
+                        { name: "Dumbbell Row (Geniş Çekiş)", sets: "3 set x 12 tekrar", rest: "75 sn", intensity: "Orta", instructions: "Sırt kaslarınızı yukarıda 1 saniye sıkıştırın." },
+                        { name: "Face Pull (Rotator Manşet Koruma)", sets: "3 set x 15 tekrar", rest: "60 sn", intensity: "Hafif", instructions: "Omuz stabilizasyonunu artırmak için yavaş çekin." }
+                    ]},
+                    { day: "Çarşamba", status: "Dinlenme", title: "Aktif Toparlanma", exercises: [] },
+                    { day: "Perşembe", status: "Antrenman", title: "Alt Ekstremite & Çırpma Gücü", exercises: [
+                        { name: "Tahta ile Ayak Vurma", sets: "6 set x 50 Metre", rest: "45 sn", intensity: "Yüksek", instructions: "Hareketi kalçadan başlatın, dizleri fazla bükmeyin." },
+                        { name: "Split Squat (Denge Gelişimi)", sets: "3 set x 10 tekrar", rest: "90 sn", intensity: "Orta", instructions: "Kalça kemiği simetrisini koruyarak alçalın." }
+                    ]},
+                    { day: "Cuma", status: "Antrenman", title: "Omurga & Core Stabilizasyonu", exercises: [
+                        { name: "Dead Bug Core Aktivasyon", sets: "3 set x 12 tekrar", rest: "60 sn", intensity: "Hafif", instructions: "Bel boşluğunu mata tamamen yapıştırın." },
+                        { name: "Plank Hold", sets: "3 set x 45 saniye", rest: "60 sn", intensity: "Orta", instructions: "Kalçayı sıkı, başı omurgaya paralel tutun." }
+                    ]},
+                    { day: "Cumartesi", status: "Aktif Dinlenme", title: "Yavaş Tempo Aerobik Kardiyo", exercises: [
+                        { name: "Açık Havada Tempolu Yürüyüş", sets: "1 set x 40 Dakika", rest: "Yok", intensity: "Hafif", instructions: "Nefes alışverişinizi burundan koordine edin." }
+                    ]},
+                    { day: "Pazar", status: "Dinlenme", title: "Tam Kas Rejenerasyonu", exercises: [] }
+                ],
+                "Powerlifting & Güreş": [
+                    { day: "Pazartesi", status: "Antrenman", title: "Alt Vücut Temel Kuvvet (Squat)", exercises: [
+                        { name: "Goblet Squat (Derin Çömelme)", sets: "4 set x 8 tekrar", rest: "90 sn", intensity: "Orta", instructions: "Kalçayı geriye doğru vererek topuklara basın." },
+                        { name: "Romanian Deadlift (Kök Gücü)", sets: "3 set x 10 tekrar", rest: "90 sn", intensity: "Orta", instructions: "Barı bacaklarınıza yakın tutarak kalçayı arkaya itin." }
+                    ]},
+                    { day: "Salı", status: "Antrenman", title: "Üst Vücut İtiş Kapasitesi", exercises: [
+                        { name: "Dumbbell Bench Press", sets: "4 set x 10 tekrar", rest: "90 sn", intensity: "Orta", instructions: "Dirsekleri 45 derece açıyla göğse indirin." },
+                        { name: "Push Up (Şınav)", sets: "3 set x Maksimum", rest: "60 sn", intensity: "Orta", instructions: "Karın kaslarınızı sıkarak düz bir hat koruyun." }
+                    ]},
+                    { day: "Çarşamba", status: "Dinlenme", title: "Kas Dokusu Dinlenmesi", exercises: [] },
+                    { day: "Perşembe", status: "Antrenman", title: "Sırt Çekiş ve Postür Dengeleme", exercises: [
+                        { name: "Barfiks veya Latt Pulldown", sets: "4 set x 8 tekrar", rest: "75 sn", intensity: "Orta", instructions: "Omuzların kulaklara yaklaşmasını engelleyin." },
+                        { name: "Band Pull-Apart (Arka Omuz)", sets: "3 set x 20 tekrar", rest: "60 sn", intensity: "Hafif", instructions: "Öne çökük omuz asimetrisini düzeltmek için esnetin." }
+                    ]},
+                    { day: "Cuma", status: "Antrenman", title: "Kinestetik Patlayıcı Güç", exercises: [
+                        { name: "Kettlebell Swing", sets: "4 set x 12 tekrar", rest: "60 sn", intensity: "Yüksek", instructions: "Gücü dizlerden değil, kalça patlamasından alın." },
+                        { name: "Dumbbell Bulgaian Split Squat", sets: "3 set x 8 tekrar", rest: "90 sn", intensity: "Yüksek", instructions: "Diz kapağının öne fırlamasına izin vermeyin." }
+                    ]},
+                    { day: "Cumartesi", status: "Aktif Dinlenme", title: "Miyofasyal Gevşeme (Roller)", exercises: [
+                        { name: "Köpük Rulo ile Kas Masajı", sets: "1 set x 20 Dakika", rest: "Yok", intensity: "Hafif", instructions: "Sert kas gruplarının üzerinde yavaşça gezinin." }
+                    ]},
+                    { day: "Pazar", status: "Dinlenme", title: "Tam Rejenerasyon", exercises: [] }
+                ],
+                "Atletizm & Orta-Uzun Koşu": [
+                    { day: "Pazartesi", status: "Antrenman", title: "Aerobik Eşik Mukavemet Koşusu", exercises: [
+                        { name: "Tempolu Sabit Hız Koşusu", sets: "1 set x 30 Dakika", rest: "Yok", intensity: "Orta", instructions: "Dakikada ortalama 150-160 adım frekansı seçin." }
+                    ]},
+                    { day: "Salı", status: "Antrenman", title: "Bacak Kuvveti & Eklem Dayanıklılığı", exercises: [
+                        { name: "Glute Ham Bridge (Kalça Köprüsü)", sets: "3 set x 15 tekrar", rest: "60 sn", intensity: "Hafif", instructions: "Kalçayı en tepe noktada 2 saniye sıkın." },
+                        { name: "Single Leg Calf Raise (Kalf İtiş)", sets: "3 set x 20 tekrar", rest: "45 sn", intensity: "Orta", instructions: "Aşil tendonunu korumak için kontrollü indirin." }
+                    ]},
+                    { day: "Çarşamba", status: "Dinlenme", title: "Aktif Akciğer Boşaltımı", exercises: [] },
+                    { day: "Perşembe", status: "Antrenman", title: "Fartlek (Değişken Hızlı Koşu)", exercises: [
+                        { name: "Süratli Tempo Koşu", sets: "5 set x 3 Dakika", rest: "2 dk yavaş", intensity: "Yüksek", instructions: "Hızlı tempolardan sonra yürümeyin, hafif tempoda sönümleyin." }
+                    ]},
+                    { day: "Cuma", status: "Antrenman", title: "Merkez Bölge & Postür Destek", exercises: [
+                        { name: "Plank Hold", sets: "3 set x 60 saniye", rest: "60 sn", intensity: "Orta", instructions: "Omurganızı tüm yönlerde düz tutun." },
+                        { name: "Bird Dog (Denge)", sets: "3 set x 12 tekrar", rest: "45 sn", intensity: "Hafif", instructions: "Zıt kol ve bacağı paralel uzatın." }
+                    ]},
+                    { day: "Cumartesi", status: "Aktif Dinlenme", title: "Doğa Yürüyüşü", exercises: [
+                        { name: "Yumuşak Zeminde Yürüyüş", sets: "1 set x 50 Dakika", rest: "Yok", intensity: "Hafif", instructions: "Dizlere binen darbeyi azaltmak için toprak zemin seçin." }
+                    ]},
+                    { day: "Pazar", status: "Dinlenme", title: "Komple Dinlenme", exercises: [] }
+                ]
+            };
+
+            const chosenSchedule = schedules[chosenSport] || schedules["Atletizm & Orta-Uzun Koşu"];
+
+            // Assemble finalized result JSON
+            generatedResult = {
+                recommendedSports: sports,
+                physicalAnalysisReport: {
+                    skeletalSummary: `Boyunuz (${answers.general.height}cm), kilo (${answers.general.weight}kg) dengenizle birleştiğinde ${answers.skeleton.shoulderWidth} omuz çatınız ve ${answers.skeleton.limbLengthRatio} limbleriniz ${chosenSport} için muazzam bir kaldıraç mekanizması oluşturmaktadır.`,
+                    postureWarnings: `Postürde bildirilen ${answers.posture.spineCurve} durumu ve ${answers.posture.shoulderPosition} omuz yapısı, idman sırasında asimetrik stres noktaları yaratabilir. Hazırladığımız idman programı bu sapmaları iyileştirici esnemeleri içermektedir.`,
+                    muscleFiberAssessment: `${answers.muscle.bodyType} somatotipine sahip olmanız ve ${answers.muscle.muscleFiberType} lif eğiliminiz, vücudun oksijen sönümleme ve tork reflekslerini belirleyen en temel genetik avantadır.`
+                },
+                developmentProgram: {
+                    sportName: chosenSport,
+                    phaseName: answers.general.fitnessLevel === 'Başlangıç' ? 'Temel Mobilizasyon ve Spora Uyum Fazı' : 'Kuvvet-Mukavemet Kazanım Dönemi',
+                    duration: answers.general.fitnessLevel === 'Başlangıç' ? '12 Hafta' : '8 Hafta',
+                    weeklySchedule: chosenSchedule,
+                    nutritionAdvice: [
+                        answers.muscle.bodyType === 'Ektomorf' ? "Yüksek kaliteli karbonhidrat tüketimini artırın, kilo kilo başına 1.6gr protein tüketin." : answers.muscle.bodyType === 'Endomorf' ? "Karbonhidratları idman çevresine sınırlayın, yeşil sebzeleri ve lifli proteinleri önceliklendirin." : "Mükemmel protein sentezi kapasitesi için dengeli makro dağılımı sürdürün.",
+                        "Egzersiz öncesi yeterli sodyum ve hidrasyon (3 litre su) tork kaybını engeller.",
+                        "Antrenmandan hemen sonra yıpranan kasları onarmak için kaliteli amino asit tüketin."
+                    ],
+                    stretchingAndRecovery: [
+                        "İdman sonralarında mutlaka 10 dakika hamstring, gövde ve omuz dinamik esnemeleri uygulayın.",
+                        "Sakatlık önleme adına haftada bir kez sıcak banyo veya sauna seansı damar genişlemesini teşvik eder.",
+                        answers.posture.spineCurve.includes('Lordoz') ? "Günde 2 kez Hip Flexor (Kalça bükücü) esnemesi yaparak pelvik çukurluğu rahatlatın." : "Hafif sırt asimetrilerini gidermek için tek taraflı kapı eşiği göğüs esnemesi yapın."
+                    ]
+                }
+            };
+
+            // Transition DOM view state
+            document.getElementById('form-container').classList.add('hidden');
+            document.getElementById('sidebar-panel').classList.add('hidden');
+            document.getElementById('intro-card').classList.add('hidden');
+            
+            // Build and display recommended sports in HTML board
+            renderSportsBoard();
+            renderAnatomicalModifications();
+            setScheduleDay("Pazartesi");
+
+            // Show results section
+            const resultsDiv = document.getElementById('results-workspace');
+            resultsDiv.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // DOM Rendering Utilities for results
+        function renderSportsBoard() {
+            const listContainer = document.getElementById('recommended-sports-list');
+            listContainer.innerHTML = "";
+
+            generatedResult.recommendedSports.forEach((sport, idx) => {
+                const card = document.createElement('div');
+                card.className = `p-5 rounded-2xl border transition-all cursor-pointer relative overflow-hidden ${
+                    activeSportIndex === idx
+                        ? "border-emerald-500 bg-emerald-50/10 shadow-xs ring-1 ring-emerald-500"
+                        : "border-gray-200 bg-white hover:border-gray-300"
+                }`;
+                card.setAttribute('onclick', `changeActiveSport(${idx})`);
+
+                card.innerHTML = `
+                    <div class="absolute top-4 right-4 flex items-center gap-1 bg-slate-900 text-white rounded-full px-2.5 py-1 font-mono text-[10px] font-bold">
+                        <i data-lucide="sparkles" class="w-3 h-3 text-emerald-400"></i> %${sport.matchScore} Uyum
+                    </div>
+                    <span class="text-[9px] font-bold text-slate-400 font-mono tracking-wider block uppercase">ÖNERİ</span>
+                    <h4 class="text-base font-extrabold text-slate-900 mt-1">${sport.sportName}</h4>
+                    <p class="text-xs text-slate-600 mt-2 leading-relaxed">${sport.suitabilityReason}</p>
+                `;
+                listContainer.appendChild(card);
+            });
+
+            // Fill under detail card
+            const activeSport = generatedResult.recommendedSports[activeSportIndex];
+            const detailPane = document.getElementById('sport-details-pane');
+            
+            let prosHTML = "";
+            activeSport.pros.forEach(p => {
+                prosHTML += `<li class="leading-snug">${p}</li>`;
+            });
+
+            let consHTML = "";
+            activeSport.cons.forEach(c => {
+                consHTML += `<li class="leading-snug text-slate-600 flex items-start gap-1.5"><span class="text-orange-500 mt-0.5 shrink-0">⚠️</span><span>${c}</span></li>`;
+            });
+
+            detailPane.innerHTML = `
+                <div class="space-y-4">
+                    <div>
+                        <span class="text-[9px] font-bold text-emerald-600 uppercase tracking-widest block font-mono mb-1.5">AVANTAJLI FİZİKSEL ÖZELLİKLERİNİZ</span>
+                        <ul class="text-xs text-slate-700 list-disc list-inside space-y-1">
+                            ${prosHTML}
+                        </ul>
+                    </div>
+                    <div class="pt-3 border-t border-slate-100">
+                        <span class="text-[9px] font-bold text-orange-600 uppercase tracking-widest block font-mono mb-1.5">DİKKAT EDİLECEK BİYOMEKANİK RİSKLER</span>
+                        <ul class="text-xs text-slate-700 list-none space-y-1">
+                            ${consHTML}
+                        </ul>
+                    </div>
+                </div>
+            `;
+
+            // Fill clinical text values
+            document.getElementById('cl-skeletal-rep').textContent = generatedResult.physicalAnalysisReport.skeletalSummary;
+            document.getElementById('cl-posture-rep').textContent = generatedResult.physicalAnalysisReport.postureWarnings;
+            document.getElementById('cl-muscle-rep').textContent = generatedResult.physicalAnalysisReport.muscleFiberAssessment;
+
+            document.getElementById('lbl-somatotip').textContent = answers.muscle.bodyType;
+            document.getElementById('lbl-esneklik').textContent = answers.muscle.flexibility;
+            document.getElementById('lbl-sched-duration').textContent = generatedResult.developmentProgram.duration;
+
+            // Fill nutrition and stretches recovery
+            const nutContainer = document.getElementById('nutrition-advices-list');
+            nutContainer.innerHTML = "";
+            generatedResult.developmentProgram.nutritionAdvice.forEach(nut => {
+                nutContainer.innerHTML += `<li class="flex gap-2"><span class="text-emerald-500 shrink-0 font-bold">•</span><span>${nut}</span></li>`;
+            });
+
+            const recContainer = document.getElementById('recovery-advices-list');
+            recContainer.innerHTML = "";
+            generatedResult.developmentProgram.stretchingAndRecovery.forEach(rec => {
+                recContainer.innerHTML += `<li class="flex gap-2"><span class="text-emerald-500 shrink-0 font-bold">•</span><span>${rec}</span></li>`;
+            });
+
+            lucide.createIcons();
+        }
+
+        function changeActiveSport(idx) {
+            activeSportIndex = idx;
+            renderSportsBoard();
+        }
+
+        // Apply interactive anatomical SVG visual adjustments depending on form inputs
+        function renderAnatomicalModifications() {
+            const hasLordoz = answers.posture.spineCurve.includes('Lordoz');
+            const hasKifoz = answers.posture.spineCurve.includes('Kifoz');
+            const hasSkolyoz = answers.posture.spineCurve.includes('Skolyoz');
+            const isAsymmetricShoulder = answers.posture.shoulderPosition.includes('Sol') || answers.posture.shoulderPosition.includes('Sağ');
+            const isAsymmetricPelvis = answers.posture.pelvisAlignment.includes('Öne') || answers.posture.pelvisAlignment.includes('Arkaya');
+
+            // Set Spine color according to risk
+            const spinePath = document.getElementById('svg-spine-path');
+            if (hasLordoz) {
+                spinePath.setAttribute('d', 'M 100 80 Q 94 130 100 170 T 96 230');
+                spinePath.setAttribute('stroke', '#f59e0b'); // Warn
+            } else if (hasKifoz) {
+                spinePath.setAttribute('d', 'M 100 80 Q 112 130 100 170 T 100 230');
+                spinePath.setAttribute('stroke', '#f97316'); // Serious
+            } else if (hasSkolyoz) {
+                spinePath.setAttribute('d', 'M 100 80 Q 86 130 100 170 T 114 230');
+                spinePath.setAttribute('stroke', '#ef4444'); // Critical
+            } else {
+                spinePath.setAttribute('d', 'M 100 80 L 100 230');
+                spinePath.setAttribute('stroke', '#10b981'); // Stabil healthy
+            }
+
+            // Shoulders tilt if asymmetric
+            const leftJoint = document.getElementById('svg-shoulder-l');
+            const rightJoint = document.getElementById('svg-shoulder-r');
+            const shoulderPath = document.getElementById('svg-shoulders-path');
+
+            if (answers.posture.shoulderPosition.includes('Sol')) {
+                shoulderPath.setAttribute('d', 'M 60 84 L 140 76');
+                leftJoint.setAttribute('cy', '84');
+                leftJoint.setAttribute('class', 'fill-amber-500');
+                rightJoint.setAttribute('cy', '76');
+                rightJoint.setAttribute('class', 'fill-emerald-500');
+            } else if (answers.posture.shoulderPosition.includes('Sağ')) {
+                shoulderPath.setAttribute('d', 'M 60 76 L 140 84');
+                leftJoint.setAttribute('cy', '76');
+                leftJoint.setAttribute('class', 'fill-emerald-500');
+                rightJoint.setAttribute('cy', '84');
+                rightJoint.setAttribute('class', 'fill-amber-500');
+            } else {
+                shoulderPath.setAttribute('d', 'M 60 80 L 140 80');
+                leftJoint.setAttribute('cy', '80');
+                leftJoint.setAttribute('class', 'fill-emerald-500');
+                rightJoint.setAttribute('cy', '80');
+                rightJoint.setAttribute('class', 'fill-emerald-500');
+            }
+
+            // Pelvic line tilt if anterior tilt
+            const pelvisLine = document.getElementById('svg-pelvis-line');
+            if (answers.posture.pelvisAlignment.includes('Öne')) {
+                pelvisLine.setAttribute('y1', '226');
+                pelvisLine.setAttribute('y2', '234');
+                pelvisLine.setAttribute('stroke', '#f59e0b');
+            } else {
+                pelvisLine.setAttribute('y1', '230');
+                pelvisLine.setAttribute('y2', '230');
+                pelvisLine.setAttribute('stroke', '#10b981');
+            }
+
+            // Initial selected region: Spinal
+            selectVisualZone('spine');
+        }
+
+        // SVG Visualizer Interactive details changer
+        function selectVisualZone(zone) {
+            const container = document.getElementById('visual-details-card');
+            
+            // Remove border colors
+            container.className = "bg-slate-50 rounded-xl p-4 border-l-4 transition-all";
+
+            if (zone === 'spine') {
+                container.classList.add('border-emerald-500');
+                const pathDesc = answers.posture.spineCurve === 'Normal'
+                    ? "Doğal fizyolojik omurga kemikleri simetrisi korunmuş durumda. Nötral duruş sağlıklı seviyede."
+                    : `${answers.posture.spineCurve} nedeniyle spor sırasında dikey omurga sıkıştırmalarını sınırlayan kontrollü destek bantları ve kalça stabilizasyon egzersizleri yapılmalıdır.`;
+
+                container.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <h5 class="font-bold text-slate-900 text-xs">Omurga Dizilimi & Doğal Kavis</h5>
+                        <span class="px-2 py-0.5 text-[10px] bg-emerald-100 text-emerald-800 rounded-md font-bold">${answers.posture.spineCurve === 'Normal' ? 'Stabil' : 'Sapma'}</span>
+                    </div>
+                    <p class="text-xs font-semibold text-slate-700 mt-2 font-mono">Belirlenen: ${answers.posture.spineCurve}</p>
+                    <p class="text-xs text-slate-600 mt-1">${pathDesc}</p>
+                `;
+            } else if (zone === 'shoulders') {
+                container.classList.add('border-blue-500');
+                const shoulderDesc = answers.posture.shoulderPosition === 'Dengeli'
+                    ? "Omuz çizgisi yatay düzlemde mükemmel derecede simetrik yerleşmiş durumdadır."
+                    : `${answers.posture.shoulderPosition} omuz yapısı, çekiş idmanlarında sol/sağ rotator manşet asimetrisi yaratabileceğinden tek taraflı direnç kuvvetlendirmeleri reçete edilmiştir.`;
+
+                container.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <h5 class="font-bold text-slate-900 text-xs">Omuz Kuşağı & Skapular Stabilite</h5>
+                        <span class="px-2 py-0.5 text-[10px] bg-blue-100 text-blue-800 rounded-md font-bold">${answers.skeleton.shoulderWidth} Genişlik</span>
+                    </div>
+                    <p class="text-xs font-semibold text-slate-700 mt-2 font-mono">Duruş: ${answers.posture.shoulderPosition}</p>
+                    <p class="text-xs text-slate-600 mt-1">${shoulderDesc}</p>
+                `;
+            } else if (zone === 'pelvis') {
+                container.classList.add('border-orange-500');
+                const pelvisDesc = answers.posture.pelvisAlignment === 'Dengeli'
+                    ? "Pelvis (leğen kemiği) nötr düz simetride olup omurga temelini kusursuz şekilde dengelemektedir."
+                    : `${answers.posture.pelvisAlignment} (Anterior/Posterior sapma), bel fıtığı oluşumu veya fasyal gerilimi tetikleyebileceğinden hamstring esnetmelerine öncelik verilmiştir.`;
+
+                container.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <h5 class="font-bold text-slate-900 text-xs">Pelvik Denge & Sakral Kök</h5>
+                        <span class="px-2 py-0.5 text-[10px] bg-orange-100 text-orange-800 rounded-md font-bold">${answers.skeleton.hipWidth} Kalça</span>
+                    </div>
+                    <p class="text-xs font-semibold text-slate-700 mt-2 font-mono">Kalça Hizası: ${answers.posture.pelvisAlignment}</p>
+                    <p class="text-xs text-slate-600 mt-1">${pelvisDesc}</p>
+                `;
+            } else if (zone === 'limbs') {
+                container.classList.add('border-amber-500');
+                container.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <h5 class="font-bold text-slate-900 text-xs">Ekstremite (Kol/Bacak) Momentum Kaldıraçları</h5>
+                        <span class="px-2 py-0.5 text-[10px] bg-amber-100 text-amber-800 rounded-md font-bold">${answers.skeleton.limbLengthRatio}</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-2">
+                        • <strong>Kuvvet Mekaniği:</strong> ${answers.skeleton.limbLengthRatio === 'Kısa' 
+                            ? 'Ekstremitelerinizin nispeten kısa olması dikey eksende torku artırarak squat ve halter gücünde biyolojik avantaj sağlar.' 
+                            : 'Ekstremitelerinizin uzun olması, doğrusal esneklikte ve yüzme esnasındaki hydro-moment kolu genişliğinde büyük avantaj sağlar.'}
+                    </p>
+                `;
+            }
+        }
+
+        // Daily schedule workouts changer
+        function setScheduleDay(dayName) {
+            document.querySelectorAll('.sched-day-btn').forEach(btn => {
+                btn.classList.add('text-slate-600', 'hover:bg-slate-200/50');
+                btn.classList.remove('bg-slate-900', 'text-white', 'shadow-xs');
+            });
+            const clickedBtn = document.getElementById(`btn-day-${dayName}`);
+            if (clickedBtn) {
+                clickedBtn.classList.remove('text-slate-600', 'hover:bg-slate-200/50');
+                clickedBtn.classList.add('bg-slate-900', 'text-white', 'shadow-xs');
+            }
+
+            const currentDayMeta = generatedResult.developmentProgram.weeklySchedule.find(d => d.day === dayName);
+            const titleLabel = document.getElementById('lbl-workout-title');
+            const statusLabel = document.getElementById('lbl-workout-status');
+            const exContainer = document.getElementById('js-exercises-container');
+
+            if (!currentDayMeta) return;
+
+            titleLabel.textContent = currentDayMeta.title;
+            statusLabel.textContent = currentDayMeta.status;
+
+            // Rest day vs active day style adjustment
+            if (currentDayMeta.status === 'Dinlenme') {
+                statusLabel.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold border bg-slate-100 text-slate-600 border-slate-200';
+            } else {
+                statusLabel.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold border bg-emerald-50 text-emerald-700 border-emerald-100';
+            }
+
+            exContainer.innerHTML = "";
+            if (currentDayMeta.exercises && currentDayMeta.exercises.length > 0) {
+                currentDayMeta.exercises.forEach(ex => {
+                    const row = document.createElement('div');
+                    row.className = "bg-white border border-gray-100 rounded-xl p-4 shadow-3xs hover:border-gray-200 transition-all flex flex-col justify-between";
+                    row.innerHTML = `
+                        <div>
+                            <div class="flex items-start justify-between gap-2">
+                                <h5 class="font-extrabold text-slate-900 text-xs">${ex.name}</h5>
+                                <span class="text-[9px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-100">${ex.intensity} Şiddet</span>
+                            </div>
+                            <div class="mt-2.5 flex items-center gap-4 text-xs font-mono text-slate-500 bg-slate-50 px-2 py-1.5 rounded-lg border border-slate-100">
+                                <div><strong>Set x Tekrar:</strong> ${ex.sets}</div>
+                                <div class="w-[1px] h-3 bg-slate-200"></div>
+                                <div><strong>Dinlenme:</strong> ${ex.rest}</div>
+                            </div>
+                            <p class="text-[11px] text-slate-600 mt-2.5 border-l-2 border-slate-300 pl-2 italic leading-relaxed">${ex.instructions}</p>
+                        </div>
+                    `;
+                    exContainer.appendChild(row);
+                });
+            } else {
+                exContainer.innerHTML = `
+                    <div class="col-span-2 flex flex-col items-center justify-center p-8 text-center bg-white border border-dashed border-gray-200 rounded-2xl">
+                        <span class="text-2xl mb-1">🧘‍♂️</span>
+                        <p class="text-sm font-bold text-slate-800">Aktif ve Tam Fizyolojik Toparlanma Günü</p>
+                        <p class="text-xs text-slate-500 max-w-sm mt-1">Egzersiz yapılmamalıdır. Kas lif gruplarındaki mikroskopik yırtıkların onarımı ve laktat fasyasının yenilenmesi için tam dinlenme uygulanmalıdır.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Reset application
+        function resetApp() {
+            // Hide results
+            document.getElementById('results-workspace').classList.add('hidden');
+
+            // Show inputs
+            document.getElementById('form-container').classList.remove('hidden');
+            document.getElementById('sidebar-panel').classList.remove('hidden');
+            document.getElementById('intro-card').classList.remove('hidden');
+
+            activeSportIndex = 0;
+            goToStep(0);
+        }
+    </script>
+</body>
+</html>
